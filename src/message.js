@@ -6,6 +6,6 @@
 // =====================================================================
 
 module.exports = {
-  headline: 'Hello from TechyCamp Demo Day!',
+  headline: 'Hello from TechyCamp Demo Day - Batch 5!',
   subtext: 'This page was tested, packaged and deployed by a robot.',
 };
