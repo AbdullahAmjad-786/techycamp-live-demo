@@ -1,0 +1,44 @@
+# Teaser for Week 7 (Kubernetes / AKS) - shown in the demo, not applied live.
+# "Run 3 copies of my container. If one dies, replace it automatically."
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: techycamp-live-demo
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: techycamp-live-demo
+  template:
+    metadata:
+      labels:
+        app: techycamp-live-demo
+    spec:
+      containers:
+        - name: web
+          image: ghcr.io/YOUR-GITHUB-USER/techycamp-live-demo:latest
+          ports:
+            - containerPort: 3000
+          env:
+            - name: RUNNING_ON
+              value: "Azure Kubernetes Service"
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: 3000
+          resources:
+            requests: { cpu: 50m, memory: 64Mi }
+            limits: { cpu: 250m, memory: 256Mi }
+---
+# "Give those 3 copies one public address and share traffic between them."
+apiVersion: v1
+kind: Service
+metadata:
+  name: techycamp-live-demo
+spec:
+  type: LoadBalancer
+  selector:
+    app: techycamp-live-demo
+  ports:
+    - port: 80
+      targetPort: 3000

@@ -1,0 +1,22 @@
+{
+  "name": "techycamp-live-demo",
+  "version": "1.0.0",
+  "description": "TechyCamp free demo class: from laptop to live on Azure with Docker and GitHub Actions",
+  "main": "src/server.js",
+  "private": true,
+  "scripts": {
+    "start": "node src/server.js",
+    "test": "jest"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "supertest": "^7.0.0"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "license": "MIT"
+}
