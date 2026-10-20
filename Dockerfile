@@ -1,39 +1,20 @@
-# =====================================================================
-#  Dockerfile = the recipe for packing our app into a "lunch box"
-#  (a container image) that runs the same on any computer or cloud.
-# =====================================================================
+# Dockerfile = the recipe for packing our app into a container image
 
-# ---- Stage 1: install the app's packages --------------------------
-# Start from a small Linux that already has Node.js installed
-FROM node:20-alpine AS deps
+# 1. Start from a small Linux that already has Node.js installed
+FROM node:20-alpine
+
+# 2. Create a folder for the app and work inside it
 WORKDIR /app
-# Copy only the package list first, so Docker can cache this step
-COPY package.json package-lock.json ./
-# Install only what production needs (no test tools)
+
+# 3. Copy the package list and install the packages
+COPY package*.json ./
 RUN npm ci --omit=dev
 
-# ---- Stage 2: the final, small image we ship ----------------------
-FROM node:20-alpine
-WORKDIR /app
-ENV NODE_ENV=production
-
-# The pipeline passes these in, so the page can show which commit is live
-ARG GIT_SHA=docker-local
-ARG BUILD_TIME=unknown
-ENV GIT_SHA=$GIT_SHA \
-    BUILD_TIME=$BUILD_TIME
-
-COPY --from=deps /app/node_modules ./node_modules
-COPY package.json ./
+# 4. Copy our code
 COPY src ./src
 
-# Don't run as the all-powerful root user (security best practice)
-USER node
-
-# The app listens on port 3000 inside the container
+# 5. The app listens on port 3000
 EXPOSE 3000
 
-# Docker checks every 30s that the app is still alive
-HEALTHCHECK --interval=30s --timeout=3s CMD wget -qO- http://localhost:3000/health || exit 1
-
+# 6. Command to start the app
 CMD ["node", "src/server.js"]

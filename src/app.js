@@ -1,15 +1,18 @@
 const express = require('express');
 const os = require('os');
+const fs = require('fs');
 const message = require('./message');
 
 const app = express();
 
-// Build information. The pipeline injects these into the Docker image,
+const insideDocker = fs.existsSync('/.dockerenv');
+
+// Deploy information. The pipeline sets these when it deploys to Azure,
 // so the page can prove WHICH version of the code is running.
 const info = {
   version: (process.env.GIT_SHA || 'local').slice(0, 7),
-  builtAt: process.env.BUILD_TIME || 'not built yet',
-  runningOn: process.env.RUNNING_ON || (process.env.GIT_SHA ? 'Docker container' : 'My laptop'),
+  deployedAt: process.env.DEPLOYED_AT || 'not deployed yet',
+  runningOn: process.env.RUNNING_ON || (insideDocker ? 'Docker container' : 'My laptop'),
   host: os.hostname(),
   startedAt: new Date().toISOString(),
 };
@@ -70,7 +73,7 @@ app.get('/', (req, res) => {
     <div class="grid">
       <div class="card"><div class="label">Version (git commit)</div><div class="value">${escapeHtml(info.version)}</div></div>
       <div class="card"><div class="label">Running on</div><div class="value">${escapeHtml(info.runningOn)}</div></div>
-      <div class="card"><div class="label">Built at</div><div class="value">${escapeHtml(info.builtAt)}</div></div>
+      <div class="card"><div class="label">Deployed at</div><div class="value">${escapeHtml(info.deployedAt)}</div></div>
       <div class="card"><div class="label">Container name</div><div class="value">${escapeHtml(info.host)}</div></div>
     </div>
   </main>

@@ -20,6 +20,4 @@ docker run -p 8080:3000 techycamp-demo      # http://localhost:8080
 Edit `src/message.js`, then commit and push to `main`. GitHub Actions tests it, builds the image, pushes it to `ghcr.io` and deploys it to Azure.
 A headline over 60 characters fails the tests, and nothing gets deployed.
 
-Setup and the full class run sheet are in [DEMO-GUIDE.md](DEMO-GUIDE.md).
-
 Want to build this yourself? See [DevOps for Beginners at TechyCamp](https://www.techycamp.com/courses/devops-fundamentals).
